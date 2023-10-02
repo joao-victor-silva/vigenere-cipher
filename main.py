@@ -117,6 +117,36 @@ def scalar_product(rhs: List[float], lhs: List[float]) -> float:
     return value
 
 
+def find_key_length(encrypted_message: str, window_size: int) -> int:
+    coincidences = []
+    for i in range(1, len(encrypted_message)):
+        counter = 0
+        for j in range(0, len(encrypted_message) - i):
+            if ((encrypted_message[i] not in ascii_lowercase)
+                and (encrypted_message[i] in ascii_lowercase)):
+                continue
+
+            if encrypted_message[i] == encrypted_message[j]:
+                counter += 1
+        coincidences.append(counter)
+
+    peak_indices = noise_peak_finding(coincidences, window_size)
+    # print(peak_indices)
+
+    if len(peak_indices) > 1:
+        distance_of_peaks = [peak_indices[i] - peak_indices[i-1] for i in range(1, len(peak_indices))]
+        # print(distance_of_peaks)
+        frequency_counts = {}
+        for i in distance_of_peaks:
+            if i in frequency_counts.keys():
+                frequency_counts[i] += 1
+            else:
+                frequency_counts[i] = 1
+        # print(frequency_counts)
+        # print(sum(distance_of_peaks) / len(distance_of_peaks))
+        return round(sum(distance_of_peaks) / len(distance_of_peaks))
+
+
 def main():
     parser = ArgumentParser()
     parser.add_argument('action', choices=['cipher', 'decipher', 'decrypt'], help='action to do with informed message')
