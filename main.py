@@ -57,5 +57,41 @@ def main():
             print('invalid option. quiting...')
             exit(1)
 
+def remap_letter(letter: str) -> str:
+    mapped_letters = {
+        'á': 'a',
+        'â': 'a',
+        'ã': 'a',
+        'à': 'a',
+        'ä': 'a',
+        'å': 'a',
+        'é': 'e',
+        'ê': 'e',
+        'ẽ': 'e',
+        'è': 'e',
+        'í': 'i',
+        'î': 'i',
+        'ĩ': 'i',
+        'ì': 'i',
+        'ó': 'o',
+        'ô': 'o',
+        'õ': 'o',
+        'ò': 'o',
+        'ö': 'o',
+        'ú': 'u',
+        'û': 'u',
+        'ũ': 'u',
+        'ù': 'u',
+        'ü': 'u',
+        'ç': 'c',
+    }
+
+    # remap letter with accents and ç
+    if letter.lower() in mapped_letters.keys():
+        return mapped_letters[letter.lower()]
+
+    return letter.lower()
+
+
 if __name__ == "__main__":
     main()
