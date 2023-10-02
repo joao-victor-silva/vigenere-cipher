@@ -184,6 +184,8 @@ def find_key_length(encrypted_message: str, window_size: int) -> int:
         # print(sum(distance_of_peaks) / len(distance_of_peaks))
         return round(sum(distance_of_peaks) / len(distance_of_peaks))
 
+    return len(encrypted_message)
+
 
 def main():
     parser = ArgumentParser()
