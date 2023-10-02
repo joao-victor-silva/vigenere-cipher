@@ -174,5 +174,50 @@ def remap_letter(letter: str) -> str:
     return letter.lower()
 
 
+def noise_peak_finding(coincidences: List[int], window_size: int) -> List[int]:
+    smoothed = []
+    moving_average_size = window_size
+    lower_bound = floor(moving_average_size / 2)
+    upper_bound = ceil(moving_average_size / 2)
+
+    if len(coincidences) < moving_average_size:
+        average = ceil(sum(coincidences) / len(coincidences))
+        for _ in range(len(coincidences)):
+            smoothed.append(average)
+    else:
+        for i in range(len(coincidences)):
+            begin = None
+            end = None
+            if lower_bound <= i < len(coincidences) - upper_bound:
+                begin = i - lower_bound
+                end = i + upper_bound
+            elif i < upper_bound:
+                begin = 0
+                end = i + upper_bound
+            else:
+                begin = i - lower_bound
+                end = len(coincidences) 
+
+            average = ceil(sum(coincidences[begin:end]) / len(coincidences[begin:end]))
+            smoothed.append(average)
+
+    peak_indices = []
+    peak_index = None
+    peak_value = None
+    for i in range(len(coincidences)):
+        if coincidences[i] > smoothed[i]:
+            if peak_value is None or coincidences[i] > peak_value:
+                peak_index = i
+                peak_value = coincidences[i]
+        elif coincidences[i] < smoothed[i] and peak_index is not None:
+            peak_indices.append(peak_index)
+            peak_index = None
+            peak_value = None
+    if peak_index is not None:
+        peak_indices.append(peak_index)
+
+    return peak_indices
+
+
 if __name__ == "__main__":
     main()
