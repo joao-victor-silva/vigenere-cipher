@@ -110,6 +110,44 @@ def decipher(key: str, encrypted_message: str) -> str:
 
     return decrypted_message
 
+def decrypt(encrypted_message: str, language: str, window_size: int, key_size: Optional[int] = None):
+    key_length = None
+    if key_size is not None:
+        key_length = key_size
+    else:
+        key_length = find_key_length(encrypted_message, window_size)
+        print(f'guessed key length: {key_length}')
+
+    key_letters = [None for _ in range(key_length)]
+
+    encrypted_message_size = len(encrypted_message)
+    letter_frequency = letter_frequency_per_language[language]
+    for i in range(key_length):
+        encrypted_letter_frequency = [0 for _ in range(len(ascii_lowercase))]
+        letter_count = len([None for j in range(i, encrypted_message_size, key_length)])
+        for j in range(i, encrypted_message_size, key_length):
+            if encrypted_message[j] not in ascii_lowercase:
+                continue
+
+            encrypted_letter_frequency[ord(encrypted_message[j]) - ord('a')] += 1 / letter_count
+
+        letter_index = 0
+        scalar_product_value = 0.0
+        for j in range(26):
+            current_value = scalar_product(encrypted_letter_frequency, letter_frequency)
+            if current_value > scalar_product_value:
+                scalar_product_value = current_value
+                letter_index = j
+            head = encrypted_letter_frequency.pop(0)
+            encrypted_letter_frequency.append(head)
+        # print(f'{i} letter:', chr(ord('a') + letter_index))
+        key_letters[i] = chr(ord('a') + letter_index)
+
+    key = ''.join(key_letters)
+    print(f'key: {key}')
+    return decipher(key, encrypted_message)
+
+
 def scalar_product(rhs: List[float], lhs: List[float]) -> float:
     value = 0
     for i, j in zip(rhs, lhs):
@@ -152,6 +190,9 @@ def main():
     parser.add_argument('action', choices=['cipher', 'decipher', 'decrypt'], help='action to do with informed message')
     parser.add_argument('-m', '--message', help='message text to cipher, decipher or break encryption')
     parser.add_argument('-k', '--key', help='key used to cipher the text')
+    parser.add_argument('-s', '--size', type=int, help='key size')
+    parser.add_argument('-l', '--language', choices=['portuguese', 'english'], default='portuguese')
+    parser.add_argument('-w', '--window-size', type=int, help='average window size to guess key length', default=11)
     args = vars(parser.parse_args())
     # print(args)
 
@@ -164,6 +205,8 @@ def main():
             print(cipher(args['key'], data), end='')
         case 'decipher':
             print(decipher(args['key'], data), end='')
+        case 'decrypt':
+            print(decrypt(data, args['language'], args.get('window_size'), args.get('size')), end='')
         case _:
             print('invalid option. quiting...')
             exit(1)
