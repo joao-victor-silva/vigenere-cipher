@@ -96,6 +96,8 @@ def main():
     match args['action']:
         case 'cipher':
             print(cipher(args['key'], data), end='')
+        case 'decipher':
+            print(decipher(args['key'], data), end='')
         case _:
             print('invalid option. quiting...')
             exit(1)
