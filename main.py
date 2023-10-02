@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+from math import ceil, floor
 from typing import List, Optional
 from string import ascii_lowercase
 from argparse import ArgumentParser
@@ -34,6 +35,34 @@ letter_frequency_per_language = {
         0.0021,
         0.0001,
         0.0047,
+    ],
+    'english': [
+        0.08167,
+        0.01492,
+        0.02782,
+        0.04253,
+        0.12702,
+        0.02228,
+        0.02015,
+        0.06094,
+        0.06966,
+        0.00153,
+        0.00772,
+        0.04025,
+        0.02406,
+        0.06749,
+        0.07507,
+        0.01929,
+        0.00095,
+        0.05987,
+        0.06327,
+        0.09056,
+        0.02758,
+        0.00978,
+        0.02360,
+        0.00150,
+        0.01974,
+        0.00074, 
     ],
 }
 
@@ -80,6 +109,13 @@ def decipher(key: str, encrypted_message: str) -> str:
         decrypted_message += chr(decrypted_letter + ord('a'))
 
     return decrypted_message
+
+def scalar_product(rhs: List[float], lhs: List[float]) -> float:
+    value = 0
+    for i, j in zip(rhs, lhs):
+        value += i * j
+    return value
+
 
 def main():
     parser = ArgumentParser()
