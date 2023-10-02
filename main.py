@@ -38,6 +38,29 @@ letter_frequency_per_language = {
 }
 
 
+def cipher(key: str, message: str) -> str:
+    key_stream = key.lower() * ((len(message) // len(key)) + 1)
+    key_stream = key_stream[0:len(message)]
+
+    encrypted_message = ''
+
+    plain_text_letter = ''
+    for i in range(len(message)):
+        # remap letters with accents and ç
+        plain_text_letter = remap_letter(message[i])
+
+        # skip spaces, punctuation, etc.
+        if plain_text_letter not in ascii_lowercase:
+            encrypted_message += message[i]
+            continue
+
+        # cipher letter
+        encrypted_letter = -2 * ord('a')
+        encrypted_letter += ord(plain_text_letter) + ord(key_stream[i]) 
+        encrypted_message += chr((encrypted_letter % 26) + ord('a'))
+
+    return encrypted_message
+
 def main():
     parser = ArgumentParser()
     parser.add_argument('action', choices=['cipher', 'decipher', 'decrypt'], help='action to do with informed message')
