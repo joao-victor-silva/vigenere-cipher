@@ -61,6 +61,26 @@ def cipher(key: str, message: str) -> str:
 
     return encrypted_message
 
+def decipher(key: str, encrypted_message: str) -> str:
+    key_stream = key.lower() * ((len(encrypted_message) // len(key)) + 1)
+    key_stream = key_stream[0:len(encrypted_message)]
+
+    decrypted_message = ''
+
+    for i in range(len(encrypted_message)):
+        # skip spaces, punctuation, etc.
+        if encrypted_message[i] not in ascii_lowercase:
+            decrypted_message += encrypted_message[i]
+            continue
+
+        decrypted_letter = ord(encrypted_message[i]) - ord(key_stream[i]) 
+        if decrypted_letter < 0:
+            decrypted_letter += 26
+
+        decrypted_message += chr(decrypted_letter + ord('a'))
+
+    return decrypted_message
+
 def main():
     parser = ArgumentParser()
     parser.add_argument('action', choices=['cipher', 'decipher', 'decrypt'], help='action to do with informed message')
